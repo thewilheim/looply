@@ -1,0 +1,6 @@
+@looply_HostAddress = http://localhost:5124
+
+GET {{looply_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
