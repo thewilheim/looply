@@ -26,5 +26,8 @@ namespace looply.Models
         public ICollection<Follower>? Followers { get; set; } = [];
         public ICollection<Follower>? Following { get; set; } = [];
 
+        public ICollection<CommentLikes> Comment_Likes { get; set; } = [];
+        public ICollection<PostLikes> Post_Likes { get; set; } = [];
+
     }
 }

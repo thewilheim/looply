@@ -23,6 +23,7 @@ namespace looply.Models
         public ICollection<PostLikes>? Likes { get; set; } = [];
         public ICollection<Comment>? Comments { get; set; } = [];
         public ICollection<PostTag> PostTags { get; set; } = [];
+        public required User User { get; set; }
     }
     public enum Privacy_Type
     {
