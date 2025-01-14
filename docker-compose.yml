@@ -7,7 +7,7 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_PASSWORD=example
-      - POSTGRES_DB=looply-local
+      - POSTGRES_DB=chirpr-local
     volumes:
       - db:/var/lib/postgresql/data
     healthcheck:
@@ -20,5 +20,12 @@ services:
     restart: always
     ports:
       - 8080:8080
-  volumes:
-    db:
+  azure-blob-storage:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    volumes:
+      - ./.containers/blob_storage/data:/data
+    ports:
+      - "10000:10000"
+    command: "azurite-blob --blobHost 0.0.0.0 --blobPort 10000 -l /data"
+volumes:
+  db: 
