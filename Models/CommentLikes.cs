@@ -9,8 +9,10 @@ namespace looply.Models
     {
         public Guid Comment_id { get; set; }
         public Guid User_id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public Like_type type { get; set; } = Like_type.Like;
+
+        
         public required User User { get; set; }
         public required Comment Comment { get; set; }
     }

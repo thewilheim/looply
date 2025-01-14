@@ -9,5 +9,8 @@ namespace looply.Models
     {
         public Guid Tag_id { get; set; }
         public Guid Post_id { get; set; }
+
+        public required Post Post { get; set; }
+        public required Tag Tag { get; set; }
     }
 }
