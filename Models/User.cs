@@ -29,5 +29,7 @@ namespace looply.Models
         public ICollection<CommentLikes> Comment_Likes { get; set; } = [];
         public ICollection<PostLikes> Post_Likes { get; set; } = [];
 
+        public ICollection<Comment> Comments {get; set;} = [];
+
     }
 }

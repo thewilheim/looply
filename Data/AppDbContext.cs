@@ -57,7 +57,7 @@ namespace looply.Data
                         .HasForeignKey(cl => cl.Comment_id)
                         .OnDelete(DeleteBehavior.Cascade);
                     entity.HasOne(cl => cl.User)
-                        .WithMany()
+                        .WithMany(u => u.Comment_Likes)
                         .HasForeignKey(cl => cl.User_id)
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -73,7 +73,7 @@ namespace looply.Data
                     .HasForeignKey(pl => pl.Post_id)
                     .OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(pl => pl.User)
-                    .WithMany()
+                    .WithMany(u => u.Post_Likes)
                     .HasForeignKey(pl => pl.User_id)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -88,7 +88,7 @@ namespace looply.Data
                       .HasForeignKey(c => c.Post_id)
                       .OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(c => c.User)
-                      .WithMany()
+                      .WithMany(u => u.Comments)
                       .HasForeignKey(c => c.User_id)
                       .OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(c => c.ParentComment)

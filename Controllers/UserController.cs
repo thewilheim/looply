@@ -71,7 +71,7 @@ namespace looply.Controllers
             return NotFound();
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("update")]
         public async Task<IActionResult> Update ([FromBody] User user)
         {

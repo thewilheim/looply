@@ -35,10 +35,14 @@ namespace looply.Services
 
         public async Task<User> GetUserById(string id)
         {
-            var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Id == new Guid(id));
+            var user = await _appDbContext.Users.Include(u => u.Followers).Include(u => u.Followers).Include(u => u.Post_Likes).FirstOrDefaultAsync(u => u.Id == new Guid(id));
 
             if (user != null)
             {
+                user.Followers = user.Followers.Where(f => f.FollowedId == user.Id).ToList();
+                user.Following = user.Following.Where(f => f.FollowerId == user.Id).ToList();
+                user.Post_Likes = user.Post_Likes.Where(p => p.User_id == user.Id).ToList();
+
                 return user;
             }
 
