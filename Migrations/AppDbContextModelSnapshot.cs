@@ -72,15 +72,10 @@ namespace looply.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("type")
                         .HasColumnType("integer");
 
                     b.HasKey("Comment_id", "User_id");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("User_id");
 
@@ -166,12 +161,7 @@ namespace looply.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Post_id", "User_id");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("User_id");
 
@@ -263,7 +253,7 @@ namespace looply.Migrations
                         .IsRequired();
 
                     b.HasOne("looply.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("User_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -283,12 +273,8 @@ namespace looply.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("looply.Models.User", null)
-                        .WithMany("Comment_Likes")
-                        .HasForeignKey("UserId");
-
                     b.HasOne("looply.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Comment_Likes")
                         .HasForeignKey("User_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -336,12 +322,8 @@ namespace looply.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("looply.Models.User", null)
-                        .WithMany("Post_Likes")
-                        .HasForeignKey("UserId");
-
                     b.HasOne("looply.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Post_Likes")
                         .HasForeignKey("User_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -394,6 +376,8 @@ namespace looply.Migrations
             modelBuilder.Entity("looply.Models.User", b =>
                 {
                     b.Navigation("Comment_Likes");
+
+                    b.Navigation("Comments");
 
                     b.Navigation("Followers");
 

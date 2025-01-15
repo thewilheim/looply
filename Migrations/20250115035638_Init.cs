@@ -139,8 +139,7 @@ namespace looply.Migrations
                     Post_id = table.Column<Guid>(type: "uuid", nullable: false),
                     User_id = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -151,11 +150,6 @@ namespace looply.Migrations
                         principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PostLikes_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_PostLikes_Users_User_id",
                         column: x => x.User_id,
@@ -195,8 +189,7 @@ namespace looply.Migrations
                     Comment_id = table.Column<Guid>(type: "uuid", nullable: false),
                     User_id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    type = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true)
+                    type = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -207,11 +200,6 @@ namespace looply.Migrations
                         principalTable: "Comments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CommentLikes_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CommentLikes_Users_User_id",
                         column: x => x.User_id,
@@ -224,11 +212,6 @@ namespace looply.Migrations
                 name: "IX_CommentLikes_User_id",
                 table: "CommentLikes",
                 column: "User_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CommentLikes_UserId",
-                table: "CommentLikes",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_Parent_comment_id",
@@ -254,11 +237,6 @@ namespace looply.Migrations
                 name: "IX_PostLikes_User_id",
                 table: "PostLikes",
                 column: "User_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostLikes_UserId",
-                table: "PostLikes",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_User_id",
