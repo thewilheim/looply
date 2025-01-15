@@ -62,9 +62,20 @@ namespace looply.Services
             return null;
         }
 
-        public Task<User> UpdateUser(User user)
+        public async Task<User> UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            var existingUser = _appDbContext.Users.FirstOrDefault(u => u.Id == user.Id);
+
+            if(existingUser == null) return null;
+
+            existingUser.Username = user.Username;
+            existingUser.Bio = user.Bio;
+            existingUser.Profile_picture_url = user.Profile_picture_url;
+            existingUser.Privacy = user.Privacy;
+
+            await _appDbContext.SaveChangesAsync();
+
+            return existingUser;
         }
     }
 }

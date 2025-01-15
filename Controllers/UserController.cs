@@ -70,5 +70,19 @@ namespace looply.Controllers
 
             return NotFound();
         }
+
+        [HttpPost]
+        [Route("update")]
+        public async Task<IActionResult> Update ([FromBody] User user)
+        {
+            var updatedUser = await _userService.UpdateUser(user);
+
+            if(updatedUser  != null)
+            {
+                return Ok(updatedUser);
+            }
+
+            return NotFound();
+        }
     }
 }
