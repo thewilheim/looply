@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using looply.Data;
+using looply.DTO;
 using looply.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -80,6 +81,64 @@ namespace looply.Services
             await _appDbContext.SaveChangesAsync();
 
             return existingUser;
+        }
+
+
+        public async Task<int> Follow(Follower follower)
+        {
+            if(follower == null) return -1;
+
+            _appDbContext.Follows.Add(follower);
+            await _appDbContext.SaveChangesAsync();
+
+            return 0;
+        }
+        public async Task<int> Unfollow(Follower follower)
+        {
+            if(follower == null) return -1;
+
+            if (follower.FollowerId == Guid.Empty|| follower.FollowedId == Guid.Empty)
+            {
+                return -1;
+            }
+
+            var record = await _appDbContext.Follows.FirstOrDefaultAsync(x => x.FollowerId == follower.FollowerId && x.FollowedId == follower.FollowedId);
+            if(record == null){
+                return -1;
+            }
+            
+            _appDbContext.Follows.Remove(record);
+            await _appDbContext.SaveChangesAsync();
+            
+            return 0;
+        }
+
+        public async Task<List<UserDTO>> Followers(Guid user_id)
+        {
+        return await _appDbContext.Follows
+                            .Where(x => x.FollowedId == user_id)
+                            .Include(f => f.FollowerUser)
+                            .Select(f => new UserDTO 
+                            {
+                                Id = f.FollowerUser.Id,
+                                Username = f.FollowerUser.Username,
+                                Profile_picture_url = f.FollowerUser.Profile_picture_url
+                            })
+                            .ToListAsync();
+        }
+
+        public async Task<List<UserDTO>> Following(Guid user_id)
+        {
+        return await _appDbContext.Follows
+                            .Where(x => x.FollowerId == user_id)
+                            .Include(f => f.FollowedUser)
+                            .Select(f => new UserDTO 
+                            {
+                                Id = f.FollowedUser.Id,
+                                Username = f.FollowedUser.Username,
+                                Profile_picture_url = f.FollowedUser.Profile_picture_url
+                            })
+                            .ToListAsync();
         }
     }
 }

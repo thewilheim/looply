@@ -11,7 +11,9 @@ namespace looply.Models
         public Follow_Status Status { get; set; } = Follow_Status.Accepted;
 
 
+        [JsonIgnore]
         public User? FollowerUser { get; set; }  // The follower (User)
+        [JsonIgnore]
         public User? FollowedUser { get; set; }  // The followed user (User)
 
     }

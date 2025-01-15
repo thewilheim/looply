@@ -84,5 +84,48 @@ namespace looply.Controllers
 
             return NotFound();
         }
+
+        [HttpPost]
+        [Route("follow")]
+        public async Task<IActionResult> Follow([FromBody] Follower follow)
+        {
+            var result = await _userService.Follow(follow);
+
+            if(result == -1) return BadRequest();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("unfollow")]
+        public async Task<IActionResult> Unfollow([FromBody] Follower follow)
+        {
+            var result = await _userService.Unfollow(follow);
+
+            if(result == -1) return BadRequest();
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("followers/{id:guid}")]
+        public async Task<IActionResult> Followers(Guid id)
+        {
+            var result = await _userService.Followers(id);
+
+            if(result == null) return BadRequest();
+
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("following/{id:guid}")]
+        public async Task<IActionResult> Following(Guid id)
+        {
+            var result = await _userService.Following(id);
+
+            if(result == null) return BadRequest();
+
+            return Ok(result);
+        }
     }
 }
