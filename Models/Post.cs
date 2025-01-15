@@ -6,7 +6,7 @@ namespace looply.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid User_id { get; set; }
+        public required Guid User_id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public required string Url { get; set; } = string.Empty;
@@ -20,10 +20,10 @@ namespace looply.Models
 
 
 
-        public ICollection<PostLikes>? Likes { get; set; } = [];
-        public ICollection<Comment>? Comments { get; set; } = [];
+        public ICollection<PostLikes> Likes { get; set; } = [];
+        public ICollection<Comment> Comments { get; set; } = [];
         public ICollection<PostTag> PostTags { get; set; } = [];
-        public required User User { get; set; }
+        public User? User { get; set; }
     }
     public enum Privacy_Type
     {

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace looply.Models
 {
     public class PostLikes
@@ -6,8 +8,12 @@ namespace looply.Models
         public Like_type Type { get; set; } = Like_type.Like;
         public Guid User_id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public required Post Post { get; set; }
-        public required User User { get; set; }
+
+        [JsonIgnore]
+        public Post? Post { get; set; }
+
+        [JsonIgnore]
+        public User? User { get; set; }
     }
 
 }
