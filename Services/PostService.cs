@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using looply.Data;
 using looply.DTO;
 using looply.Models;
@@ -14,25 +15,27 @@ namespace looply.Services
     public class PostService : IPostService
     {
         private readonly AppDbContext _appDbContext;
+        private readonly IMapper _mapper;
 
-        public PostService(AppDbContext appDbContext)
+        public PostService(AppDbContext appDbContext, IMapper mapper)
         {
             _appDbContext = appDbContext;
+            _mapper = mapper;
         }
-        public async Task<Post> Create(Post post)
+        public async Task<PostDTO> Create(Post post)
         {
             if(post != null)
             {
                 await _appDbContext.Posts.AddAsync(post);
                 await _appDbContext.SaveChangesAsync();
 
-                return post;
+                return _mapper.Map<PostDTO>(post);
             }
 
             return null;
         }
 
-        public async Task<Post> Delete(Guid id)
+        public async Task<PostDTO> Delete(Guid id)
         {
             if(id == Guid.Empty) return null;
 
@@ -42,13 +45,13 @@ namespace looply.Services
             {
                 _appDbContext.Posts.Remove(post);
                 await _appDbContext.SaveChangesAsync();
-                return post;
+                return _mapper.Map<PostDTO>(post);
             }
 
             return null;
         }
 
-        public async Task<ICollection<Post>> GetAllByUser(Guid user_id)
+        public async Task<ICollection<PostDTO>> GetAllPostByUser(Guid user_id)
         {
             if(user_id == Guid.Empty) return null;
 
@@ -56,45 +59,38 @@ namespace looply.Services
 
             if(posts != null)
             {
-                return posts;
+                return _mapper.Map<ICollection<PostDTO>>(posts);
             }
 
             return [];
         }
 
-        public async Task<Post> GetByPostId(Guid post_id)
+        public async Task<PostDTO> GetPostsById(Guid post_id)
         {
 
             if(post_id == Guid.Empty) return null;
 
-            var post = await _appDbContext.Posts
-                .Include(p => p.Comments.Where(c => c.Parent_comment_id == null)) // Include only top-level comments
-                .ThenInclude(c => c.Replies) // Include replies for the top-level comments
-                .ThenInclude(c => c.Likes)
-                .Include(p => p.Likes)
-                .FirstOrDefaultAsync(p => p.Id == post_id);
+            var post = await _appDbContext.Posts.Include(c => c.Comments).Include(l => l.Likes).FirstOrDefaultAsync(p => p.Id == post_id);
 
             if(post != null)
             {
-                return post;
+                return _mapper.Map<PostDTO>(post);
             }
 
             return null;
         }
 
-        public async Task<Post> Update(UpdatePostDTO post, Guid id)
+        public async Task<PostDTO> Update(UpdatePostDTO post, Guid id)
         {
             var exsitingPost = await _appDbContext.Posts.FirstOrDefaultAsync(p => p.Id == id);
-
             if(exsitingPost == null) return null;
-
             exsitingPost.Privacy = post.Privacy;
             exsitingPost.Description = post.Description;
             exsitingPost.Title = post.Title;
 
             await _appDbContext.SaveChangesAsync();
 
-            return exsitingPost;
+                return _mapper.Map<PostDTO>(exsitingPost);
         }
 
         public async Task<PostLikes> LikePost(PostLikes liked_post)
@@ -124,6 +120,14 @@ namespace looply.Services
             await _appDbContext.SaveChangesAsync();
             return post;
         }
-        
+
+        public async Task<List<PostLikes>> GetPostLikes(Guid post_id)
+        {
+            var likes = await _appDbContext.PostLikes.Where(u => u.Post_id == post_id).ToListAsync();
+
+            if(likes == null || post_id == Guid.Empty) return null;
+
+            return likes;
+        }
     }
 }

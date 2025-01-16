@@ -1,5 +1,6 @@
 using Azure.Storage.Blobs;
 using looply.Data;
+using looply.Mappings;
 using looply.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddAutoMapper(typeof(MappingProfile), typeof(Program));
 builder.Services.AddSingleton(_ => new BlobServiceClient(builder.Configuration.GetConnectionString("BlobStorage")));
 builder.Services.AddControllers();
 Console.WriteLine(builder.Configuration.GetConnectionString("BlobStorage"));

@@ -39,12 +39,21 @@ namespace looply.Controllers
         }
 
         [HttpGet]
-        [Route("{id:guid}")]
+        [Route("post/{id:guid}")]
         public async Task<IActionResult> GetAllByPostID(Guid id)
         {
             var comments = await _commentService.GetCommentsByPostId(id);
             if(comments  == null) return BadRequest();
             return Ok(comments);
+        }
+
+        [HttpGet]
+        [Route("replies/{id:guid}")]
+        public async Task<IActionResult> GetRepliesByCommentID(Guid id)
+        {
+            var replies = await _commentService.GetRepliesByCommentId(id);
+            if(replies == null) return BadRequest();
+            return Ok(replies);
         }
 
         [HttpPost]
@@ -58,11 +67,22 @@ namespace looply.Controllers
 
         [HttpPost]
         [Route("unlike")]
-        public async Task<IActionResult> Unlie([FromBody] CommentLikes liked_comment)
+        public async Task<IActionResult> Unlike([FromBody] CommentLikes liked_comment)
         {
             var result = await _commentService.Unlike(liked_comment);
             if(result == null) return BadRequest();
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("{comment_id:guid}/likes")]
+        public async Task<IActionResult> GetCommentLikes(Guid comment_id)
+        {
+            var likes = await _commentService.GetLikesByCommentId(comment_id);
+
+            if(likes == null) return BadRequest();
+
+            return Ok(likes);
         }
     }
 }

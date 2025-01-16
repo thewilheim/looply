@@ -45,14 +45,29 @@ namespace looply.Services
         public async Task<List<Comment>> GetCommentsByPostId(Guid post_id)
         {
             if(post_id == Guid.Empty) return null;
-
-            var comments = await _appDbContext.Comments.Where(c => c.Post_id == post_id).Include(u => u.Replies).Include(u => u.Likes).ToListAsync();
-
+            var comments = await _appDbContext.Comments.Where(c => c.Post_id == post_id && c.Parent_comment_id == null).ToListAsync();
             if(comments!= null){
                 return comments;
             }
-
             return null;
+        }
+
+        public async Task<List<Comment>> GetRepliesByCommentId(Guid comment_id)
+        {
+            var replies = await _appDbContext.Comments.Where(u => u.Parent_comment_id == comment_id).ToListAsync();
+
+            if(replies == null || comment_id == Guid.Empty) return null;
+
+            return replies;
+        }
+
+        public async Task<List<CommentLikes>> GetLikesByCommentId(Guid comment_id)
+        {
+            var likes = await _appDbContext.CommentLikes.Where(u => u.Comment_id == comment_id).ToListAsync();
+
+            if(likes == null || comment_id == Guid.Empty) return null;
+
+            return likes;
         }
 
         public async Task<CommentLikes> Like(CommentLikes liked_comment)

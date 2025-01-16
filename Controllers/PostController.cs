@@ -48,7 +48,7 @@ namespace looply.Controllers
         [Route("myposts/{id:guid}")]
         public async Task<IActionResult> GetUsersPosts(Guid id)
         {
-            var posts = await _postService.GetAllByUser(id);
+            var posts = await _postService.GetAllPostByUser(id);
 
             if(posts == null) return BadRequest("Not Found");
 
@@ -59,7 +59,7 @@ namespace looply.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> GetPost(Guid id)
         {
-            var post = await _postService.GetByPostId(id);
+            var post = await _postService.GetPostsById(id);
 
             if(post == null) return BadRequest("Not Found");
 

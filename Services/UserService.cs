@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using looply.Data;
 using looply.DTO;
 using looply.Models;
@@ -13,28 +14,30 @@ namespace looply.Services
     public class UserService : IUserService
     {
 
-        private AppDbContext _appDbContext;
-        public UserService(AppDbContext appDbContext)
+        private readonly AppDbContext _appDbContext;
+        private readonly IMapper _mappper;
+
+        public UserService(AppDbContext appDbContext, IMapper mapper)
         {
             _appDbContext = appDbContext;
+            _mappper = mapper;
         }
 
-        public async Task<User> DeleteUser(string id)
+        public async Task<UserDTO> DeleteUser(string id)
         {
 
 
-            if (String.IsNullOrEmpty(id)) return null;
             var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Id == new Guid(id));
-            if (user != null)
-            {
-                _appDbContext.Users.Remove(user);
-                await _appDbContext.SaveChangesAsync();
-            }
-            return null;
+            if (user == null||String.IsNullOrEmpty(id)) return null;
+
+            _appDbContext.Users.Remove(user);
+            await _appDbContext.SaveChangesAsync();
+
+            return _mappper.Map<UserDTO>(user);
 
         }
 
-        public async Task<User> GetUserById(string id)
+        public async Task<UserDTO> GetUserById(string id)
         {
             var user = await _appDbContext.Users.Include(u => u.Followers).Include(u => u.Followers).Include(u => u.Post_Likes).FirstOrDefaultAsync(u => u.Id == new Guid(id));
 
@@ -44,30 +47,30 @@ namespace looply.Services
                 user.Following = user.Following.Where(f => f.FollowerId == user.Id).ToList();
                 user.Post_Likes = user.Post_Likes.Where(p => p.User_id == user.Id).ToList();
 
-                return user;
+                return _mappper.Map<UserDTO>(user);
             }
 
             return null;
         }
 
-        public Task<User> Login(string email, string password)
+        public Task<UserDTO> Login(string email, string password)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> Register(User user)
+        public async Task<UserDTO> Register(User user)
         {
             if (user != null)
             {
                 await _appDbContext.Users.AddAsync(user);
                 await _appDbContext.SaveChangesAsync();
-                return user;
+                return _mappper.Map<UserDTO>(user);
             }
 
             return null;
         }
 
-        public async Task<User> UpdateUser(User user)
+        public async Task<UserDTO> UpdateUser(User user)
         {
             var existingUser = _appDbContext.Users.FirstOrDefault(u => u.Id == user.Id);
 
@@ -80,7 +83,7 @@ namespace looply.Services
 
             await _appDbContext.SaveChangesAsync();
 
-            return existingUser;
+            return _mappper.Map<UserDTO>(existingUser);
         }
 
 

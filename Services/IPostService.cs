@@ -9,12 +9,13 @@ namespace looply.Services
 {
     public interface IPostService
     {
-        Task<Post> Create(Post post);
-        Task<Post> Delete(Guid id);
-        Task<Post> Update(UpdatePostDTO post,  Guid id);
-        Task<ICollection<Post>> GetAllByUser (Guid user_id);
-        Task<Post> GetByPostId (Guid post_id);
+        Task<PostDTO> Create(Post post);
+        Task<PostDTO> Delete(Guid id);
+        Task<PostDTO> Update(UpdatePostDTO post,  Guid id);
+        Task<ICollection<PostDTO>> GetAllPostByUser (Guid user_id);
+        Task<PostDTO> GetPostsById (Guid post_id);
         Task<PostLikes> LikePost(PostLikes liked_post);
         Task<PostLikes> Unlike(PostLikes liked_post);
+        Task<List<PostLikes>> GetPostLikes(Guid post_id);
     }
 }
