@@ -22,22 +22,24 @@ namespace looply.Services
             _appDbContext = appDbContext;
             _mapper = mapper;
         }
-        public async Task<PostDTO> Create(Post post)
+        public async Task<ServiceResponse<PostDTO>> Create(Post post)
         {
             if(post != null)
             {
                 await _appDbContext.Posts.AddAsync(post);
                 await _appDbContext.SaveChangesAsync();
 
-                return _mapper.Map<PostDTO>(post);
+                var postDto = _mapper.Map<PostDTO>(post);
+
+               return ServiceResponse<PostDTO>.SuccessResponse(postDto);
             }
 
-            return null;
+            return ServiceResponse<PostDTO>.ErrorResponse("Unable to create post.");
         }
 
-        public async Task<PostDTO> Delete(Guid id)
+        public async Task<ServiceResponse<PostDTO>> Delete(Guid id)
         {
-            if(id == Guid.Empty) return null;
+            if(id == Guid.Empty) return ServiceResponse<PostDTO>.ErrorResponse("Invalid post id .");
 
             var post = _appDbContext.Posts.FirstOrDefault(p => p.Id == id);
 
@@ -45,52 +47,57 @@ namespace looply.Services
             {
                 _appDbContext.Posts.Remove(post);
                 await _appDbContext.SaveChangesAsync();
-                return _mapper.Map<PostDTO>(post);
+                var mappedPost = _mapper.Map<PostDTO>(post);
+                return ServiceResponse<PostDTO>.SuccessResponse(mappedPost);
             }
 
-            return null;
+            return ServiceResponse<PostDTO>.ErrorResponse("Unable to delete post.");
         }
 
-        public async Task<ICollection<PostDTO>> GetAllPostByUser(Guid user_id)
+        public async Task<ServiceResponse<ICollection<PostDTO>>> GetAllPostByUser(Guid user_id)
         {
-            if(user_id == Guid.Empty) return null;
+            if(user_id == Guid.Empty) return ServiceResponse<ICollection<PostDTO>>.ErrorResponse("Invalid user id.");
 
             var posts = await _appDbContext.Posts.Where(posts => posts.User_id == user_id).ToListAsync();
 
             if(posts != null)
             {
-                return _mapper.Map<ICollection<PostDTO>>(posts);
+                var postDto = _mapper.Map<ICollection<PostDTO>>(posts);
+                return ServiceResponse<ICollection<PostDTO>>.SuccessResponse(postDto);
             }
 
-            return [];
+            return ServiceResponse<ICollection<PostDTO>>.ErrorResponse("Unable to find posts.");
         }
 
-        public async Task<PostDTO> GetPostsById(Guid post_id)
+        public async Task<ServiceResponse<PostDTO>> GetPostsById(Guid post_id)
         {
 
-            if(post_id == Guid.Empty) return null;
+            if(post_id == Guid.Empty) return ServiceResponse<PostDTO>.ErrorResponse("Invalid post id .");
 
             var post = await _appDbContext.Posts.Include(c => c.Comments).Include(l => l.Likes).FirstOrDefaultAsync(p => p.Id == post_id);
 
             if(post != null)
             {
-                return _mapper.Map<PostDTO>(post);
+                var postDto = _mapper.Map<PostDTO>(post);
+                return ServiceResponse<PostDTO>.SuccessResponse(postDto);
             }
 
-            return null;
+            return ServiceResponse<PostDTO>.ErrorResponse("Unable to find post.");
         }
 
-        public async Task<PostDTO> Update(UpdatePostDTO post, Guid id)
+        public async Task<ServiceResponse<PostDTO>> Update(UpdatePostDTO post, Guid id)
         {
             var exsitingPost = await _appDbContext.Posts.FirstOrDefaultAsync(p => p.Id == id);
-            if(exsitingPost == null) return null;
+            if(exsitingPost == null) return ServiceResponse<PostDTO>.ErrorResponse("Unable to find post.");
             exsitingPost.Privacy = post.Privacy;
             exsitingPost.Description = post.Description;
             exsitingPost.Title = post.Title;
 
             await _appDbContext.SaveChangesAsync();
 
-                return _mapper.Map<PostDTO>(exsitingPost);
+            var postDTO =  _mapper.Map<PostDTO>(exsitingPost);
+
+            return ServiceResponse<PostDTO>.SuccessResponse(postDTO);
         }
 
         public async Task<PostLikes> LikePost(PostLikes liked_post)

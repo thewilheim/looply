@@ -28,42 +28,40 @@ namespace looply.Controllers
         [Route("")]
         public async Task<IActionResult> Create([FromBody] Post post)
         {
-            var createdPost = await _postService.Create(post);
-            if(createdPost == null) return BadRequest();
-            return Ok(createdPost);
+            var response = await _postService.Create(post);
+            if(!response.Success) return BadRequest(new {message = response.ErrorMessage});
+            return Ok(response.Data);
         }
 
         [HttpDelete]
         [Route("delete/{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var deletedItem = await _postService.Delete(id);
-
-            if(deletedItem == null) return BadRequest();
-
-            return NoContent();
+            var response = await _postService.Delete(id);
+            if(!response.Success) return BadRequest(new {message = response.ErrorMessage});
+            return Ok(response.Data);
         }
 
         [HttpGet]
         [Route("myposts/{id:guid}")]
         public async Task<IActionResult> GetUsersPosts(Guid id)
         {
-            var posts = await _postService.GetAllPostByUser(id);
+            var response = await _postService.GetAllPostByUser(id);
 
-            if(posts == null) return BadRequest("Not Found");
+            if(!response.Success) return BadRequest(response.ErrorMessage);
 
-            return Ok(posts);
+            return Ok(response.Data);
         }
 
         [HttpGet]
         [Route("{id:guid}")]
         public async Task<IActionResult> GetPost(Guid id)
         {
-            var post = await _postService.GetPostsById(id);
+            var response = await _postService.GetPostsById(id);
 
-            if(post == null) return BadRequest("Not Found");
+            if(!response.Success) return BadRequest(response.ErrorMessage);
 
-            return Ok(post);
+            return Ok(response.Data);
         }
 
         [HttpPost]
