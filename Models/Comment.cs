@@ -1,5 +1,6 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace looply.Models
 {
@@ -17,8 +18,11 @@ namespace looply.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
 
-        public required Post Post { get; set; }
-        public required User User { get; set; }
+        [JsonIgnore]
+        public Post? Post { get; set; }
+        [JsonIgnore]
+        public User? User { get; set; }
+        [JsonIgnore]
         public Comment? ParentComment { get; set; }
         public ICollection<Comment> Replies { get; set; } = [];
         public ICollection<CommentLikes> Likes { get; set; } = [];

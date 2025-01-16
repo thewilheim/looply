@@ -67,7 +67,12 @@ namespace looply.Services
 
             if(post_id == Guid.Empty) return null;
 
-            var post = await _appDbContext.Posts.FirstOrDefaultAsync(p => p.Id == post_id);
+            var post = await _appDbContext.Posts
+                .Include(p => p.Comments.Where(c => c.Parent_comment_id == null)) // Include only top-level comments
+                .ThenInclude(c => c.Replies) // Include replies for the top-level comments
+                .ThenInclude(c => c.Likes)
+                .Include(p => p.Likes)
+                .FirstOrDefaultAsync(p => p.Id == post_id);
 
             if(post != null)
             {

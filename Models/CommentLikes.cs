@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace looply.Models
@@ -12,9 +13,10 @@ namespace looply.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public Like_type type { get; set; } = Like_type.Like;
 
-        
-        public required User User { get; set; }
-        public required Comment Comment { get; set; }
+        [JsonIgnore]
+        public User? User { get; set; }
+        [JsonIgnore]
+        public Comment? Comment { get; set; }
     }
     public enum Like_type
     {
